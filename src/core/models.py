@@ -7,8 +7,8 @@ class Movie(models.Model):
     title = models.CharField(_("Title"), max_length=200)
     description = models.TextField(_("Description"), max_length=500)
     stock = models.IntegerField(_("Stock"))
-    rental_price = models.DecimalField(_("Rental Price"), max_digits=6, decimal_places=2)
-    sale_price = models.DecimalField(_("Sale Price"), max_digits=6, decimal_places=2)
+    rental_price = models.DecimalField(_("Rental Price"), max_digits=8, decimal_places=2)
+    sale_price = models.DecimalField(_("Sale Price"), max_digits=8, decimal_places=2)
     availability = models.BooleanField(_("Is available"), default=True)
     created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Created At"), auto_now=True)
@@ -25,7 +25,7 @@ class Movie(models.Model):
 class MovieImage(models.Model):
     '''Manage as many images per movie as required'''
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    image = models.ImageField(_("Image"))
+    image = models.ImageField(_("Image"), upload_to='media/movies/images/')
 
     class Meta:
         verbose_name = _("Movie Image")

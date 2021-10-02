@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib import admin
 from django.forms.models import BaseInlineFormSet
-from django.forms import forms
 
 from core.models import Movie, MovieImage
 
@@ -14,13 +13,13 @@ class AtLeastOneImage(BaseInlineFormSet):
         super(AtLeastOneImage, self).clean()
         if any(self.errors):
             return
-        if not any(cleaned_data and not cleaned_data.get('DELETE', False)
-            for cleaned_data in self.cleaned_data):
+        data = self.cleaned_data
+        if not any(i and not i.get('DELETE', False) for i in data):
             raise forms.ValidationError('At least one item required.')
 
 
 class MovieImageInline(admin.TabularInline):
-    '''Define images movie as formset inline and force to have a least one images'''
+    '''Define images movie as formset and force to have a least one image'''
     model = MovieImage
     formset = AtLeastOneImage
 

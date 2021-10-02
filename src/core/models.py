@@ -58,7 +58,7 @@ class Rent(models.Model):
     returned = models.BooleanField(_("Is Returned"), default=False)
     returned_at = models.DateTimeField(_("Returned At"), blank=True, null=True)
     extra_charge = models.DecimalField(
-        _("Extra Charge"), max_digits=6, decimal_places=2)
+        _("Extra Charge"), max_digits=6, decimal_places=2, default=0.0)
     amount = models.DecimalField(_("Amount"), max_digits=6, decimal_places=2)
 
     class Meta:
@@ -68,3 +68,19 @@ class Rent(models.Model):
     def __str__(self) -> str:
         '''Return the representation of each row'''
         return f'{self.pk} - {self.movie.title}'
+
+
+class Purchase(models.Model):
+    '''This entity will save all the rent purchases'''
+    rent = models.OneToOneField(Rent, on_delete=models.CASCADE)
+    date = models.DateTimeField(_("Date"), default=datetime.now)
+    created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
+    total = models.DecimalField(_("Total"), max_digits=6, decimal_places=2)
+
+    class Meta:
+        verbose_name = _("Purchase")
+        verbose_name_plural = _("Purchases")
+
+    def __str__(self) -> str:
+        '''Return the representation of each row'''
+        return f'{self.date} - {self.rent} - {self.total}'

@@ -15,7 +15,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
 
-urlpatterns = [
-    path('admin/', admin.site.urls),
-]
+dev_urlpatterns = []
+if settings.DEBUG:
+    dev_urlpatterns = [
+        path('admin/', admin.site.urls),
+    ]
+
+urlpatterns = []
+urlpatterns += dev_urlpatterns

@@ -17,6 +17,7 @@ class Movie(models.Model):
     availability = models.BooleanField(_("Is available"), default=True)
     created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Created At"), auto_now=True)
+    likes = models.ManyToManyField(User, verbose_name=_('Likes'))
 
     class Meta:
         verbose_name = _("Movie")

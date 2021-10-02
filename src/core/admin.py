@@ -7,7 +7,7 @@ from django.contrib import admin
 from django.forms.models import BaseInlineFormSet
 from django.contrib.admin.models import LogEntry,  DELETION
 
-from core.models import Movie, MovieImage, Purchase, Rent
+from core.models import Movie, MovieImage, Purchase, Rent, Sale
 
 
 if settings.DEBUG:
@@ -64,3 +64,4 @@ if settings.DEBUG:
     admin.site.register(LogEntry, LogEntryAdmin)
     admin.site.register(Rent)
     admin.site.register(Purchase)
+    admin.site.register(Sale)

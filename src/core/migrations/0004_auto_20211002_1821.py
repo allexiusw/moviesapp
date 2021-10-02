@@ -15,11 +15,16 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='movie',
             name='likes',
-            field=models.ManyToManyField(to=settings.AUTH_USER_MODEL, verbose_name='Likes'),
+            field=models.ManyToManyField(
+                to=settings.AUTH_USER_MODEL, verbose_name='Likes'),
         ),
         migrations.AlterField(
             model_name='rent',
             name='extra_charge',
-            field=models.DecimalField(decimal_places=2, default=0.0, max_digits=6, verbose_name='Extra Charge'),
+            field=models.DecimalField(
+                decimal_places=2,
+                default=0.0,
+                max_digits=6,
+                verbose_name='Extra Charge'),
         ),
     ]

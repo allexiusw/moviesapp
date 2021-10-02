@@ -1,6 +1,10 @@
 from django import forms
+from django.urls import reverse
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
 from django.contrib import admin
 from django.forms.models import BaseInlineFormSet
+from django.contrib.admin.models import LogEntry,  DELETION
 
 from core.models import Movie, MovieImage
 
@@ -29,4 +33,28 @@ class AdminMovie(admin.ModelAdmin):
     inlines = [MovieImageInline]
 
 
+class LogEntryAdmin(admin.ModelAdmin):
+    list_display = [
+        'action_time',
+        'user',
+        'content_type',
+        'object_link',
+        'action_flag',
+    ]
+
+    def object_link(self, obj):
+        if obj.action_flag == DELETION:
+            link = escape(obj.object_repr)
+        else:
+            ct = obj.content_type
+            link = '<a href="%s">%s</a>' % (
+                        reverse(
+                            f'admin:{ct.app_label}_{ct.model}_change',
+                            args=[obj.object_id]),
+                        escape(obj.object_repr),
+                    )
+        return mark_safe(link)
+
+
 admin.site.register(Movie, AdminMovie)
+admin.site.register(LogEntry, LogEntryAdmin)

@@ -85,3 +85,20 @@ class Purchase(models.Model):
     def __str__(self) -> str:
         '''Return the representation of each row'''
         return f'{self.date} - {self.rent} - {self.total}'
+
+
+class Sale(models.Model):
+    '''Manage the movies sold to the Clients'''
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
+    date = models.DateTimeField(_("Date"))
+    amount = models.DecimalField(_("Amount"), max_digits=6, decimal_places=2)
+
+    class Meta:
+        verbose_name = _("Sale")
+        verbose_name_plural = _("Sales")
+
+    def __str__(self) -> str:
+        '''Return the representation of each row'''
+        return f'{self.movie} - {self.amount}'

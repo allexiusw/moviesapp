@@ -20,9 +20,17 @@ class Movie(models.Model):
 
     def __str__(self):
         '''Return the representation of each row'''
-        return f'{self.title}'
+        return f'{self.pk} - {self.title}'
 
-class MovieImages(models.Model):
+class MovieImage(models.Model):
     '''Manage as many images per movie as required'''
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     image = models.ImageField(_("Image"))
+
+    class Meta:
+        verbose_name = _("Movie Image")
+        verbose_name_plural = _("Movie Images")
+    
+    def __str__(self):
+        '''Return the representation of each row'''
+        return f'{self.pk} - {self.movie.title}'

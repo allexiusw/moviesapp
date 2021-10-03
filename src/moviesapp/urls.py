@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf import settings
+from django.urls.conf import include
+
 
 dev_urlpatterns = []
 if settings.DEBUG:
@@ -23,5 +25,7 @@ if settings.DEBUG:
         path('admin/', admin.site.urls),
     ]
 
-urlpatterns = []
+urlpatterns = [
+    path('api/', include('api.urls')),
+]
 urlpatterns += dev_urlpatterns

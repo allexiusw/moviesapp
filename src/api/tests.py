@@ -1,4 +1,5 @@
 # Create your tests here.
+import uuid
 from django.urls import reverse
 from django.contrib.auth.tokens import default_token_generator
 
@@ -64,6 +65,26 @@ class UserTestCase(APITestCase):
         }
         response = self.client.post(self.user_activate_url, data=data)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_activate_user_invalid_token(self):
+        '''Activate the created user using the api set is_active=True
+
+        Endpoint tested:
+            api/auth/users/activation/ POST
+                payload = data
+        '''
+
+        # UID and Tokenconfirmation are sent to the email address
+        # In this case we get this data in this way because is test env.
+        self.uid = uuid.uuid4
+        self.tokenconfirm = uuid.uuid4
+
+        data = {
+            'uid': self.uid,
+            'token': self.tokenconfirm,
+        }
+        response = self.client.post(self.user_activate_url, data=data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_login_user(self):
         '''Do login user and get the token authentication

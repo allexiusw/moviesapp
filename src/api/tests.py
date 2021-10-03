@@ -25,12 +25,13 @@ class UserTestCase(APITestCase):
         self.username = 'foo'
         self.password = 'SuperSecret123'
         self.email = 'test@test.com'
-        self.data = {
+        self.credentials = {
             'username': self.username,
             'password': self.password,
-            'email': self.email,
         }
-        response = self.client.post(self.user_create_url, data=self.data)
+        data = self.credentials.copy()
+        data['email'] = 'test@test.com'
+        response = self.client.post(self.user_create_url, data=data)
         # Be careful here, we saved the user pk to test user-detail endpoint
         self.pk = response.data['id']
 
@@ -76,12 +77,10 @@ class UserTestCase(APITestCase):
 
         # UID and Tokenconfirmation are sent to the email address
         # In this case we get this data in this way because is test env.
-        self.uid = uuid.uuid4
-        self.tokenconfirm = uuid.uuid4
 
         data = {
-            'uid': self.uid,
-            'token': self.tokenconfirm,
+            'uid': uuid.uuid4,
+            'token': uuid.uuid4,
         }
         response = self.client.post(self.user_activate_url, data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -99,11 +98,7 @@ class UserTestCase(APITestCase):
         '''
 
         self.test_activate_user()
-        data = {
-            'username': self.username,
-            'password': self.password,
-        }
-        response = self.client.post(reverse('login'), data=data)
+        response = self.client.post(reverse('login'), data=self.credentials)
         # Be careful here, we save the token.
         self.token = response.data['auth_token']
         self.assertEqual(response.status_code, status.HTTP_200_OK)

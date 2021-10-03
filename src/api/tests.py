@@ -9,7 +9,7 @@ from djoser.conf import User
 from djoser.utils import encode_uid
 
 
-class userTestCase(APITestCase):
+class UserTestCase(APITestCase):
     '''Test auth features'''
     user_create_url = reverse('user-list')
     user_activate_url = reverse('user-activation')

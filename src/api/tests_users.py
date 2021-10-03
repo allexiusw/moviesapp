@@ -43,8 +43,7 @@ class UserTestCase(APITestCase):
             api/auth/users/ POST
                 payload = data
         '''
-        data = {}
-        response = self.client.post(self.user_create_url, data=data)
+        response = self.client.post(self.user_create_url, data={})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_activate_user(self):

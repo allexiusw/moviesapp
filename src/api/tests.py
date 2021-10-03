@@ -52,3 +52,25 @@ class userTestCase(APITestCase):
         }
         response = self.client.post(self.user_activate_url, data=data)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_login_user(self):
+        '''Do login user and get the token authentication
+
+        Endpoint tested:
+            api/auth/token/login/ POST
+                payload = data
+
+        Return:
+            token: str
+                Saved in self.token to be used in Authorization headers
+
+        '''
+        self.test_activate_user()
+        data = {
+            'username': self.username,
+            'password': self.password,
+        }
+        response = self.client.post(reverse('login'), data=data)
+        # Be careful here, we save the token.
+        self.token = response.data['auth_token']
+        self.assertEqual(response.status_code, status.HTTP_200_OK)

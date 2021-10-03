@@ -1,5 +1,7 @@
 # MoviesApp
 
+[![Build Status](https://app.travis-ci.com/allexiusw/moviesapp.svg?token=wYaBCkxqpAXSKTHgNo9f&branch=development)](https://app.travis-ci.com/allexiusw/moviesapp)
+
 RESTful API to manage a small movie rental
 
 ## Installation

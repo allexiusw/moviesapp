@@ -2,7 +2,7 @@
 from django.urls import reverse
 from django.contrib.auth.tokens import default_token_generator
 
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 
 from djoser.conf import User
@@ -30,6 +30,7 @@ class userTestCase(APITestCase):
             'email': self.email,
         }
         response = self.client.post(self.user_create_url, data=self.data)
+        # Be careful here, we saved the user pk to test user-detail endpoint
         self.pk = response.data['id']
 
     def test_activate_user(self):
@@ -63,8 +64,8 @@ class userTestCase(APITestCase):
         Return:
             token: str
                 Saved in self.token to be used in Authorization headers
-
         '''
+
         self.test_activate_user()
         data = {
             'username': self.username,
@@ -73,4 +74,18 @@ class userTestCase(APITestCase):
         response = self.client.post(reverse('login'), data=data)
         # Be careful here, we save the token.
         self.token = response.data['auth_token']
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_created_user(self):
+        '''Ensure new user is created and test using user-detail
+
+        Endpoint tested:
+            api/auth/users/<pk>/ GET
+                payload = pk
+        '''
+
+        self.test_login_user()
+        self.client = APIClient()
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        response = self.client.get(reverse('user-detail', args=[self.pk]))
         self.assertEqual(response.status_code, status.HTTP_200_OK)

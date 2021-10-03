@@ -1,23 +1,22 @@
 # Create your tests here.
 from django.urls import reverse
 from rest_framework.test import APITestCase
-from rest_framework import status
 
 
-class userProfileTestCase(APITestCase):
+class userTestCase(APITestCase):
     '''Test auth features'''
-    user_create = reverse('user-list')
+    user_create_url = reverse('user-list')
+    user_activate_url = reverse('user-activation')
 
     def setUp(self) -> None:
-        # create a new user making a post request to djoser endpoint
+        '''create a new user making a post request to djoser endpoint'''
         self.username = 'foo'
         self.password = 'SuperSecret123'
+        self.email = 'test@test.com'
         self.data = {
             'username': self.username,
             'password': self.password,
+            'email': self.email,
         }
-
-    def test_create_user(self):
-        '''Ensure new user is created'''
-        response = self.client.post(self.user_create, data=self.data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.client.post(self.user_create_url, data=self.data)
+        self.pk = response.data['id']

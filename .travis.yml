@@ -10,5 +10,5 @@ install:
 # command to run tests
 script:
   - flake8 . --extend-exclude=dist,build --show-source --statistics
-  - cd src/api; python manage.py test
+  - cd src/; python manage.py test
   

@@ -1,0 +1,14 @@
+language: python
+
+python:
+  - "3.9"
+
+# command to install dependencies
+install:
+  - pip install -r api/dev.txt
+
+# command to run tests
+script:
+  - flake8 . --extend-exclude=dist,build --show-source --statistics
+  - cd src/api; python manage.py test
+  

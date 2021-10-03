@@ -32,7 +32,7 @@ class Movie(models.Model):
 class MovieImage(models.Model):
     '''Manage as many images per movie as required'''
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    image = models.ImageField(_("Image"), upload_to='media/movies/images/')
+    image = models.ImageField(_("Image"), upload_to='movies/images/')
 
     class Meta:
         verbose_name = _("Movie Image")

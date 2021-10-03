@@ -4,7 +4,7 @@
 
 RESTful API to manage a small movie rental
 
-## Installation
+## For development environment
 
 Clone the repository:
 
@@ -26,7 +26,13 @@ Install the requirements:
 
     pip install -r requirements.txt
 
-Create the database:
+Create your user and database in Postgres:
+
+    user=moviesapp_user
+    password=DoNotUseInProd123
+    database=moviesapp_db
+
+Run migrations:
 
     python src/manage.py migrate
 

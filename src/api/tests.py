@@ -9,7 +9,12 @@ class userTestCase(APITestCase):
     user_activate_url = reverse('user-activation')
 
     def setUp(self) -> None:
-        '''create a new user making a post request to djoser endpoint'''
+        '''create a new user making a post request to djoser endpoint
+
+        Endpoint tested:
+            api/auth/users/ POST
+                payload = data
+        '''
         self.username = 'foo'
         self.password = 'SuperSecret123'
         self.email = 'test@test.com'

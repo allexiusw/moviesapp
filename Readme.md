@@ -36,6 +36,11 @@ Run migrations:
 
     python src/manage.py migrate
 
+Run check flake8 coding styles and run tests:
+
+    flake8 . --extend-exclude=dist,build --show-source --statistics
+    cd src/; python manage.py test
+
 Create a superuser
 
     python src/manage.py createsuperuser 

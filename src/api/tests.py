@@ -33,6 +33,17 @@ class UserTestCase(APITestCase):
         # Be careful here, we saved the user pk to test user-detail endpoint
         self.pk = response.data['id']
 
+    def test_create_user_without_username(self):
+        '''Not create user without username and password
+
+        Endpoint tested:
+            api/auth/users/ POST
+                payload = data
+        '''
+        data = {}
+        response = self.client.post(self.user_create_url, data=data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_activate_user(self):
         '''Activate the created user using the api set is_active=True
 

@@ -1,6 +1,12 @@
 # Create your tests here.
 from django.urls import reverse
+from django.contrib.auth.tokens import default_token_generator
+
 from rest_framework.test import APITestCase
+from rest_framework import status
+
+from djoser.conf import User
+from djoser.utils import encode_uid
 
 
 class userTestCase(APITestCase):
@@ -25,3 +31,24 @@ class userTestCase(APITestCase):
         }
         response = self.client.post(self.user_create_url, data=self.data)
         self.pk = response.data['id']
+
+    def test_activate_user(self):
+        '''Activate the created user using the api set is_active=True
+
+        Endpoint tested:
+            api/auth/users/activation/ POST
+                payload = data
+        '''
+        user = User.objects.get(username=self.username)
+
+        # UID and Tokenconfirmation are sent to the email address
+        # In this case we get this data in this way because is test env.
+        self.uid = encode_uid(user.pk)
+        self.tokenconfirm = default_token_generator.make_token(user)
+
+        data = {
+            'uid': self.uid,
+            'token': self.tokenconfirm,
+        }
+        response = self.client.post(self.user_activate_url, data=data)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

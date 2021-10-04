@@ -30,6 +30,14 @@ class MovieTestCase(APITestCase):
         self.token = str(Token.objects.create(user=user))
 
     def test_create_movie_as_admin_any_images(self):
+        '''Test create images as an admin without at least one image should fail.
+
+        It uses the user's token to perform actions as an admin.
+        The API return HTTP_400_BAD_REQUEST because (images field missing)
+
+        Endpoint tested:
+            api/movies/ POST
+        '''
         self.authclient = APIClient()
         self.authclient.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         response = self.authclient.post(
@@ -37,6 +45,16 @@ class MovieTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_create_movie_as_admin_one_images(self):
+        '''Test create images as an admin with one image should be saved.
+
+        It uses the user's token to perform actions as an admin.
+        The API return HTTP_201_CREATED as required and
+        create Movie and MovieImage instances related.
+
+        Endpoint tested:
+            api/movies/ POST
+                payload = self.movie -> dict
+        '''
         self.authclient = APIClient()
         self.authclient.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         with open(f'{settings.STATIC_ROOT}/test.png', 'rb') as file:

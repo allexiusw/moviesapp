@@ -32,6 +32,17 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['localhost']
 
+'''CORS configurations
+If working with Angular, React or other framework enter the Origin with the
+specific port in here to avoid CORS issues.
+'''
+CORS_ALLOWED_ORIGINS = [
+    # "https://example.com",
+    # "https://sub.example.com",
+    "http://localhost:3000",  # Example to react CORS conf
+    "http://127.0.0.1:3000",  # Example to react CORS conf
+]
+
 
 # Application definition
 
@@ -44,6 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
     'djoser',
     'core',
     'api',
@@ -62,6 +74,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = 'moviesapp.urls'

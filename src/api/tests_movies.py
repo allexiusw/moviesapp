@@ -7,6 +7,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.authtoken.models import Token
 
+from core.models import Movie
+
 
 class MovieTestCase(APITestCase):
     '''Test Movie endpoint'''
@@ -69,6 +71,7 @@ class MovieTestCase(APITestCase):
         Endpoint tested:
             api/movies/ GET
         '''
+        Movie.objects.all().delete()
         response = self.client.get(self.user_create_url, data={})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertCountEqual(response.data, [])

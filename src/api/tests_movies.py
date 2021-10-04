@@ -29,7 +29,13 @@ class MovieTestCase(APITestCase):
             is_superuser=True,
             is_active=True,
         )
+        user_normal = User.objects.create(
+            username='notadmin',
+            password='SuperSecret',
+            is_active=True,
+        )
         self.token = str(Token.objects.create(user=user))
+        self.tokennotadmin = str(Token.objects.create(user=user_normal))
 
     def test_create_movie_as_admin_any_images(self):
         '''Test create images as an admin without at least one image should fail.
@@ -64,6 +70,29 @@ class MovieTestCase(APITestCase):
             response = self.authclient.post(
                 self.user_create_url, self.movie, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_create_movie_as_normaluser_one_images(self):
+        '''Test create images as a normal user should not be saved.
+
+        It uses the user's token to perform actions as a normal user.
+        The API return HTTP_201_CREATED as required and
+        create Movie and MovieImage instances related.
+
+        Endpoint tested:
+            api/movies/ POST
+                payload = self.movie -> dict
+        '''
+        self.authclient = APIClient()
+        self.authclient.credentials(
+            HTTP_AUTHORIZATION='Token ' + self.tokennotadmin)
+        with open(f'{settings.STATIC_ROOT}/test.png', 'rb') as file:
+            self.movie['images'] = [file]
+            response = self.authclient.post(
+                self.user_create_url, self.movie, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(
+            response.data['detail'],
+            'You do not have permission to perform this action.')
 
     def test_list_movies(self):
         '''List movies without authorization token

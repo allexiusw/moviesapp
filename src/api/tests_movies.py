@@ -75,3 +75,28 @@ class MovieTestCase(APITestCase):
         response = self.client.get(self.user_create_url, data={})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertCountEqual(response.data, [])
+
+    def test_update_movie_as_admin(self):
+        '''Test update movie as an admin.
+
+        It uses the user's token to perform actions as an admin.
+        The API return HTTP_200_OK and create Movie instance related.
+
+        Endpoint tested:
+            api/movies/ PUT
+                payload = self.movie -> dict
+        '''
+        self.authclient = APIClient()
+        self.authclient.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        movie = Movie.objects.create(
+            **self.movie
+        )
+        with open(f'{settings.STATIC_ROOT}/test.png', 'rb') as file:
+            self.movie['images'] = [file]
+            self.movie['title'] = 'Other title'
+            user_update_url = reverse('movie-detail', args=[movie.id])
+            response = self.authclient.put(
+                user_update_url, data=self.movie, format="multipart")
+        movie = Movie.objects.first()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(movie.title, self.movie['title'])

@@ -11,8 +11,17 @@ class MovieImageSerializer(serializers.ModelSerializer):
 
 class MovieSerializer(serializers.ModelSerializer):
     '''Movie translate models to JSON and perform actions to CRUD op'''
-    images = MovieImageSerializer(source='movieimage_set', many=True)
+    images = MovieImageSerializer(
+        source='movieimage_set', many=True, read_only=True)
 
     class Meta:
-        fields = ('id', 'title', 'description', 'images')
+        fields = (
+            'id',
+            'title',
+            'description',
+            'stock',
+            'rental_price',
+            'sale_price',
+            'images',
+        )
         model = Movie

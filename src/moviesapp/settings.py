@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-_b2cx9)_q2$+7w+mdw7*_vavahm+9@" + \
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['localhost', 'secure-crag-96021.herokuapp.com']
 
 '''CORS configurations
 If working with Angular, React or other framework enter the Origin with the
@@ -206,3 +206,7 @@ STATICFILES_DIRS = (
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+if not DEBUG:
+    import django_heroku
+    django_heroku.settings(locals())

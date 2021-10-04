@@ -1,6 +1,7 @@
 # Create your tests here.
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.conf import settings
 
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
@@ -34,6 +35,15 @@ class MovieTestCase(APITestCase):
         response = self.authclient.post(
             self.user_create_url, self.movie, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_movie_as_admin_one_images(self):
+        self.authclient = APIClient()
+        self.authclient.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        with open(f'{settings.STATIC_ROOT}/test.png', 'rb') as file:
+            self.movie['images'] = [file]
+            response = self.authclient.post(
+                self.user_create_url, self.movie, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_list_movies(self):
         '''List movies without authorization token

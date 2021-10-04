@@ -6,6 +6,7 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import PermissionDenied
 
 from core.models import Movie
 
@@ -91,8 +92,7 @@ class MovieTestCase(APITestCase):
                 self.user_create_url, self.movie, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(
-            response.data['detail'],
-            'You do not have permission to perform this action.')
+            response.data['detail'], PermissionDenied.default_detail)
 
     def test_list_movies(self):
         '''List movies without authorization token

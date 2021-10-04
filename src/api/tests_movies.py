@@ -100,3 +100,23 @@ class MovieTestCase(APITestCase):
         movie = Movie.objects.first()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(movie.title, self.movie['title'])
+
+    def test_delete_movie_as_admin(self):
+        '''Test delete movie as an admin.
+
+        It uses the user's token to perform actions as an admin.
+        The API return HTTP_200_OK and create Movie instance related.
+
+        Endpoint tested:
+            api/movies/1/ DELETE
+        '''
+        self.authclient = APIClient()
+        self.authclient.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        movie = Movie.objects.create(
+            **self.movie
+        )
+        user_update_url = reverse('movie-detail', args=[movie.id])
+        response = self.authclient.delete(user_update_url)
+        movie = Movie.objects.filter(pk=movie.id)
+        self.assertFalse(movie.exists())
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

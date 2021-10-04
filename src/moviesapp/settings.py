@@ -28,9 +28,9 @@ SECRET_KEY = 'django-insecure-_b2cx9)_q2$+7w+mdw7*_vavahm+9@" + \
     "*#1ja#h5=lu+dm(v8%*o'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost']
 
 
 # Application definition
@@ -48,6 +48,11 @@ INSTALLED_APPS = [
     'core',
     'api',
 ]
+
+if DEBUG:
+    INSTALLED_APPS += [
+        'drf_yasg',
+    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -151,6 +156,21 @@ DJOSER = {
     'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': True,
     'SERIALIZERS': {},
+}
+
+'''In swagger when you start testing the endpoints first you have to login then
+you have to get a token and in Authorize button add it in the following format:
+Token 640c0f5892141742b7cf00c222e7f04fa3ad93f3 then it will be used as auth
+token y every request.
+'''
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'DRF Token': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    }
 }
 
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'localhost')

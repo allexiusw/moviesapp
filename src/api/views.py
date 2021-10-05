@@ -1,6 +1,7 @@
 # Create your views here.
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from core.models import Movie, Rent
 from api.serializers import (
@@ -8,6 +9,8 @@ from api.serializers import (
     MovieSerializer,
     RentSerializer,
 )
+
+from api.constants import Messages
 
 
 class MovieViewSet(viewsets.ModelViewSet):
@@ -42,6 +45,18 @@ class MovieViewSet(viewsets.ModelViewSet):
             data = super().create(request, *args, **kwargs)
             serializer.save(movie_id=data.data.get('id'))
         return data
+
+    @action(detail=True, methods=['patch'])
+    def set_available(self, request, pk=None):
+        '''Change availability in movie to True
+
+        Endpoint api/movies/<:pk>/set_available/
+        return: Message.MOVIE_AVAILABLE -> str
+        '''
+        movie = self.get_object()
+        movie.availability = True
+        movie.save()
+        return Response({'message': Messages.MOVIE_AVAILABLE})
 
 
 class RentViewSet(viewsets.ModelViewSet):

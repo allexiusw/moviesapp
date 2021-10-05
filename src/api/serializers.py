@@ -22,6 +22,7 @@ class MovieSerializer(serializers.ModelSerializer):
             'stock',
             'rental_price',
             'sale_price',
+            'availability',
             'images',
         )
         model = Movie

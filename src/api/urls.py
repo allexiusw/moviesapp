@@ -41,6 +41,7 @@ if settings.DEBUG:
 
 router = DefaultRouter()
 router.register(r'movies', MovieViewSet, basename='movie')
+router.register(r'rents', MovieViewSet, basename='rent')
 
 urlpatterns = [
     path('', include(router.urls)),

@@ -2,8 +2,12 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 
-from core.models import Movie
-from api.serializers import MovieImageSerializer, MovieSerializer
+from core.models import Movie, Rent
+from api.serializers import (
+    MovieImageSerializer,
+    MovieSerializer,
+    RentSerializer,
+)
 
 
 class MovieViewSet(viewsets.ModelViewSet):
@@ -38,3 +42,11 @@ class MovieViewSet(viewsets.ModelViewSet):
             data = super().create(request, *args, **kwargs)
             serializer.save(movie_id=data.data.get('id'))
         return data
+
+
+class RentViewSet(viewsets.ModelViewSet):
+    '''Define the HTTP endpoint against the serializer mapping CRUD
+        operations to HTTP verbs, (Create -> POST, Update -> PATCH ...)
+    '''
+    serializer_class = RentSerializer
+    queryset = Rent.objects.all()

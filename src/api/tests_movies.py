@@ -152,6 +152,23 @@ class MovieTestCase(APITestCase):
         self.assertEqual(
             response.data.get('message'), Messages.MOVIE_UNAVAILABLE)
 
+    def test_set_movie_unavailable_as_normaluser(self):
+        '''Test movie set as unavailable normal user should fail.
+
+        Endpoint tested:
+            api/movies/<:id>/set_unavailable/ PATCH
+
+        Return:
+            Messages.MOVIE_UNAVAILABLE -> str
+        '''
+        movie_unavailabe = {**self.movie, **{'availability': True}}
+        movie = Movie.objects.create(
+            **movie_unavailabe,
+        )
+        movie_url = reverse('movie-set-unavailable', args=[movie.id])
+        response = self.client.patch(movie_url, data=self.movie)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_delete_movie_as_admin(self):
         '''Test delete movie as an admin.
 

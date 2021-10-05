@@ -58,6 +58,18 @@ class MovieViewSet(viewsets.ModelViewSet):
         movie.save()
         return Response({'message': Messages.MOVIE_AVAILABLE})
 
+    @action(detail=True, methods=['patch'])
+    def set_unavailable(self, request, pk=None):
+        '''Change movie to unavailable
+
+        Endpoint api/movies/<:pk>/set_unavailable/
+        return: Message.MOVIE_UNAVAILABLE -> str
+        '''
+        movie = self.get_object()
+        movie.availability = False
+        movie.save()
+        return Response({'message': Messages.MOVIE_UNAVAILABLE})
+
 
 class RentViewSet(viewsets.ModelViewSet):
     '''Define the HTTP endpoint against the serializer mapping CRUD

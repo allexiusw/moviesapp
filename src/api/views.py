@@ -5,6 +5,7 @@ from rest_framework import viewsets, status, permissions
 from rest_framework.mixins import ListModelMixin
 from rest_framework.response import Response
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 
 from core.models import Movie, Rent, Sale
 from api.serializers import (
@@ -104,6 +105,13 @@ class RentViewSet(viewsets.ModelViewSet):
     '''
     serializer_class = RentSerializer
     queryset = Rent.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if not self.request.user.is_superuser:
+            queryset = queryset.filter(rented_by=self.request.user)
+        return queryset
 
 
 class LogEntryMovieViewSet(ListModelMixin, viewsets.GenericViewSet):
@@ -121,6 +129,7 @@ class SaleViewSet(viewsets.ModelViewSet):
     '''
     serializer_class = SaleSerializer
     queryset = Sale.objects.all()
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         queryset = super().get_queryset()

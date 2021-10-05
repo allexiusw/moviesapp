@@ -1,6 +1,7 @@
 from django.contrib.admin.models import LogEntry, ACTION_FLAG_CHOICES
 
 from rest_framework import serializers
+from api.constants import Messages
 
 from core.models import Movie, MovieImage, Rent
 
@@ -15,6 +16,7 @@ class MovieSerializer(serializers.ModelSerializer):
     '''Movie translate models to JSON and perform actions to CRUD op'''
     images = MovieImageSerializer(
         source='movieimage_set', many=True, read_only=True)
+    quantity = serializers.IntegerField(write_only=True, required=False)
 
     class Meta:
         fields = (
@@ -26,6 +28,7 @@ class MovieSerializer(serializers.ModelSerializer):
             'sale_price',
             'availability',
             'images',
+            'quantity',
         )
         model = Movie
 
@@ -50,6 +53,16 @@ class RentSerializer(serializers.ModelSerializer):
             'amount',
         )
         model = Rent
+
+    def validate(self, attrs):
+        quantity = attrs['quantity']
+        if not quantity > 0:
+            raise serializers.ValidationError(
+                {'message': Messages.RENT_QUANTITY_LOW})
+        if not quantity <= attrs['movie'].stock:
+            raise serializers.ValidationError(
+                {'message': Messages.RENT_QUANTITY_NOT_AVAI})
+        return attrs
 
 
 class LogEntryMovieSerializer(serializers.ModelSerializer):

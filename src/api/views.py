@@ -1,6 +1,7 @@
-# Create your views here.
+from decimal import Decimal
 from django.contrib.admin.models import LogEntry
-from rest_framework import viewsets, status, permissions
+
+from rest_framework import serializers, viewsets, status, permissions
 from rest_framework.mixins import ListModelMixin
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -72,6 +73,28 @@ class MovieViewSet(viewsets.ModelViewSet):
         movie.availability = False
         movie.save()
         return Response({'message': Messages.MOVIE_UNAVAILABLE})
+
+    @action(detail=True, methods=['patch'])
+    def rent_it(self, request, pk=None):
+        '''Allow any user logged in rent a movie that has stock
+
+        Endpoint api/movies/rent-it/<:pk>/
+            quantity: N
+        return:
+            Message.MOVIE_RENTED -> str (HTTP 200)
+            Message.MOVIE_WITHOUT_STOCK (HTTP 400)
+        '''
+        movie = self.get_object()
+        serializer = RentSerializer(data={
+            'movie': movie.id,
+            'amount': movie.rental_price * Decimal(request.data['quantity']),
+            'quantity': request.data['quantity'],
+            'rented_by': request.user.id,
+        })
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return Response(
+            {'message': Messages.RENT_SUCCESSFULLY}, status=status.HTTP_200_OK)
 
 
 class RentViewSet(viewsets.ModelViewSet):

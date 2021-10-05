@@ -7,3 +7,6 @@ class Messages(object):
 
     MOVIE_AVAILABLE = _("Movie was changed to available.")
     MOVIE_UNAVAILABLE = _("Movie was changed to unavailable.")
+    RENT_QUANTITY_LOW = _("Rent quantity too low")
+    RENT_QUANTITY_NOT_AVAI = _("Rent quantity not available")
+    RENT_SUCCESSFULLY = _("Rent successfully")

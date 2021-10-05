@@ -6,12 +6,13 @@ from rest_framework.mixins import ListModelMixin
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
-from core.models import Movie, Rent
+from core.models import Movie, Rent, Sale
 from api.serializers import (
     LogEntryMovieSerializer,
     MovieImageSerializer,
     MovieSerializer,
     RentSerializer,
+    SaleSerializer,
 )
 
 from api.constants import Messages
@@ -112,3 +113,17 @@ class LogEntryMovieViewSet(ListModelMixin, viewsets.GenericViewSet):
     serializer_class = LogEntryMovieSerializer
     permission_classes = (permissions.IsAdminUser,)
     queryset = LogEntry.objects.filter(content_type__model='movie')
+
+
+class SaleViewSet(viewsets.ModelViewSet):
+    '''Define the HTTP endpoint against the serializer mapping CRUD
+        operations to HTTP verbs, (Create -> POST, Update -> PATCH ...)
+    '''
+    serializer_class = SaleSerializer
+    queryset = Sale.objects.all()
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        if not self.request.user.is_superuser:
+            queryset = queryset.filter(rented_by=self.request.user)
+        return queryset

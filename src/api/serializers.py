@@ -3,7 +3,7 @@ from django.contrib.admin.models import LogEntry, ACTION_FLAG_CHOICES
 from rest_framework import serializers
 from api.constants import Messages
 
-from core.models import Movie, MovieImage, Rent
+from core.models import Movie, MovieImage, Rent, Sale
 
 
 class MovieImageSerializer(serializers.ModelSerializer):
@@ -101,3 +101,36 @@ class LogEntryMovieSerializer(serializers.ModelSerializer):
 
     def get_action(self, obj):
         return dict(ACTION_FLAG_CHOICES).get(obj.action_flag)
+
+
+class SaleSerializer(serializers.ModelSerializer):
+    '''Sale translate models to JSON and perform actions to CRUD op
+    User will use it to perform CRUD action in database and map this
+    actions to HTTP verbs.
+    '''
+    buyed_by = serializers.SerializerMethodField(
+        read_only=True, required=False)
+
+    class Meta:
+        fields = [
+            'movie',
+            'user',
+            'buyed_by',
+            'created_at',
+            'date',
+            'amount',
+        ]
+        model = Sale
+
+    def validate(self, attrs):
+        quantity = attrs['quantity']
+        if not quantity > 0:
+            raise serializers.ValidationError(
+                {'message': Messages.RENT_QUANTITY_LOW})
+        if not quantity <= attrs['movie'].stock:
+            raise serializers.ValidationError(
+                {'message': Messages.RENT_QUANTITY_NOT_AVAI})
+        return attrs
+
+    def get_buyed_by(self, obj):
+        return obj.user.username

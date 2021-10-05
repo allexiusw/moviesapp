@@ -42,6 +42,7 @@ if settings.DEBUG:
 router = DefaultRouter()
 router.register(r'movies', MovieViewSet, basename='movie')
 router.register(r'rents', RentViewSet, basename='rent')
+router.register(r'sales', RentViewSet, basename='sale')
 router.register(
     r'logentrymovies', LogEntryMovieViewSet, basename='logentrymovie')
 

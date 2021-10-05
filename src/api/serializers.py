@@ -55,6 +55,7 @@ class RentSerializer(serializers.ModelSerializer):
         model = Rent
 
     def validate(self, attrs):
+        '''Check if quantity is enough to rent'''
         quantity = attrs['quantity']
         if not quantity > 0:
             raise serializers.ValidationError(
@@ -123,6 +124,7 @@ class SaleSerializer(serializers.ModelSerializer):
         model = Sale
 
     def validate(self, attrs):
+        '''Check if quantity is enough to sale'''
         quantity = attrs['quantity']
         if not quantity > 0:
             raise serializers.ValidationError(

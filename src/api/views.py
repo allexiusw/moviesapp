@@ -108,6 +108,7 @@ class RentViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        '''Filter data by user if not superadmin'''
         queryset = super().get_queryset()
         if not self.request.user.is_superuser:
             queryset = queryset.filter(rented_by=self.request.user)
@@ -132,6 +133,7 @@ class SaleViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        '''Filter data by user if not superadmin'''
         queryset = super().get_queryset()
         if not self.request.user.is_superuser:
             queryset = queryset.filter(rented_by=self.request.user)

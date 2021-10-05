@@ -10,3 +10,4 @@ class Messages(object):
     RENT_QUANTITY_LOW = _("Rent quantity too low")
     RENT_QUANTITY_NOT_AVAI = _("Rent quantity not available")
     RENT_SUCCESSFULLY = _("Rent successfully")
+    MOVIE_BUYED = _("Movie buyed successfully")

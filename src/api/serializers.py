@@ -111,6 +111,8 @@ class SaleSerializer(serializers.ModelSerializer):
     '''
     buyed_by = serializers.SerializerMethodField(
         read_only=True, required=False)
+    quantity = serializers.IntegerField(
+        write_only=True, required=False)
 
     class Meta:
         fields = [
@@ -120,6 +122,7 @@ class SaleSerializer(serializers.ModelSerializer):
             'created_at',
             'date',
             'amount',
+            'quantity',
         ]
         model = Sale
 
@@ -132,6 +135,7 @@ class SaleSerializer(serializers.ModelSerializer):
         if not quantity <= attrs['movie'].stock:
             raise serializers.ValidationError(
                 {'message': Messages.RENT_QUANTITY_NOT_AVAI})
+        del attrs['quantity']
         return attrs
 
     def get_buyed_by(self, obj):

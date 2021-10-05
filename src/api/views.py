@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import Decimal
 from django.contrib.admin.models import LogEntry
 
@@ -76,7 +77,8 @@ class MovieViewSet(viewsets.ModelViewSet):
         movie.save()
         return Response({'message': Messages.MOVIE_UNAVAILABLE})
 
-    @action(detail=True, methods=['patch'])
+    @action(
+        detail=True, methods=['patch'], permission_classes=[IsAuthenticated])
     def rent_it(self, request, pk=None):
         '''Allow any user logged in rent a movie that has stock
 
@@ -97,6 +99,31 @@ class MovieViewSet(viewsets.ModelViewSet):
             serializer.save()
         return Response(
             {'message': Messages.RENT_SUCCESSFULLY}, status=status.HTTP_200_OK)
+
+    @action(
+        detail=True, methods=['patch'], permission_classes=[IsAuthenticated])
+    def buy_it(self, request, pk=None):
+        '''Allow any user logged in buy a movie that has stock
+
+        Endpoint api/movies/buy-it/<:pk>/
+            quantity: N
+        return:
+            Message.MOVIE_BUYED -> str (HTTP 200)
+            Message.MOVIE_WITHOUT_STOCK (HTTP 400)
+        '''
+        movie = self.get_object()
+        serializer = SaleSerializer(data={
+            'movie': movie.id,
+            'amount': movie.sale_price * Decimal(request.data['quantity']),
+            'quantity': request.data['quantity'],
+            'buyed_by': request.user.id,
+            'user': request.user.id,
+            'date': datetime.now()
+        })
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return Response(
+            {'message': Messages.MOVIE_BUYED}, status=status.HTTP_200_OK)
 
 
 class RentViewSet(viewsets.ModelViewSet):

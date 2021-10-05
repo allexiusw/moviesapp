@@ -5,7 +5,7 @@ from core.models import Movie, MovieImage, Rent
 
 class MovieImageSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = '__all__'
+        fields = ['id', 'image']
         model = MovieImage
 
 

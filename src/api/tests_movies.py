@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import PermissionDenied
+from api.constants import Messages
 
 from core.models import Movie
 
@@ -129,6 +130,27 @@ class MovieTestCase(APITestCase):
         movie = Movie.objects.first()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(movie.title, self.movie['title'])
+
+    def test_set_movie_unavailable_as_admin(self):
+        '''Test movie set as unavailable as admin.
+
+        Endpoint tested:
+            api/movies/<:id>/set_unavailable/ PATCH
+
+        Return:
+            Messages.MOVIE_UNAVAILABLE -> str
+        '''
+        self.authclient = APIClient()
+        self.authclient.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        # By default movies has availability=True
+        movie = Movie.objects.create(
+            **self.movie
+        )
+        movie_url = reverse('movie-set-unavailable', args=[movie.id])
+        response = self.authclient.patch(movie_url, data=self.movie)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.data.get('message'), Messages.MOVIE_UNAVAILABLE)
 
     def test_delete_movie_as_admin(self):
         '''Test delete movie as an admin.

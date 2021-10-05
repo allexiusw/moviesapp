@@ -4,7 +4,7 @@ from django.conf import settings
 
 from rest_framework.routers import DefaultRouter
 
-from api.views import MovieViewSet
+from api.views import LogEntryMovieViewSet, MovieViewSet
 
 
 swaggerurls = []
@@ -42,6 +42,8 @@ if settings.DEBUG:
 router = DefaultRouter()
 router.register(r'movies', MovieViewSet, basename='movie')
 router.register(r'rents', MovieViewSet, basename='rent')
+router.register(
+    r'logentrymovies', LogEntryMovieViewSet, basename='logentrymovie')
 
 urlpatterns = [
     path('', include(router.urls)),

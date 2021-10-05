@@ -1,10 +1,13 @@
 # Create your views here.
-from rest_framework import viewsets, status
+from django.contrib.admin.models import LogEntry
+from rest_framework import viewsets, status, permissions
+from rest_framework.mixins import ListModelMixin
 from rest_framework.response import Response
 from rest_framework.decorators import action
 
 from core.models import Movie, Rent
 from api.serializers import (
+    LogEntryMovieSerializer,
     MovieImageSerializer,
     MovieSerializer,
     RentSerializer,
@@ -77,3 +80,12 @@ class RentViewSet(viewsets.ModelViewSet):
     '''
     serializer_class = RentSerializer
     queryset = Rent.objects.all()
+
+
+class LogEntryMovieViewSet(ListModelMixin, viewsets.GenericViewSet):
+    '''Define the HTTP endpoint against the serializer mapping CRUD
+        operations to HTTP verbs, (Create -> POST, Update -> PATCH ...)
+    '''
+    serializer_class = LogEntryMovieSerializer
+    permission_classes = (permissions.IsAdminUser,)
+    queryset = LogEntry.objects.filter(content_type__model='movie')

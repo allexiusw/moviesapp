@@ -13,21 +13,28 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='purchase',
             name='total',
-            field=models.DecimalField(decimal_places=2, max_digits=8, verbose_name='Total'),
+            field=models.DecimalField(
+                decimal_places=2, max_digits=8, verbose_name='Total'),
         ),
         migrations.AlterField(
             model_name='rent',
             name='amount',
-            field=models.DecimalField(decimal_places=2, max_digits=8, verbose_name='Amount'),
+            field=models.DecimalField(
+                decimal_places=2, max_digits=8, verbose_name='Amount'),
         ),
         migrations.AlterField(
             model_name='rent',
             name='extra_charge',
-            field=models.DecimalField(decimal_places=2, default=0.0, max_digits=8, verbose_name='Extra Charge'),
+            field=models.DecimalField(
+                decimal_places=2,
+                default=0.0,
+                max_digits=8,
+                verbose_name='Extra Charge'),
         ),
         migrations.AlterField(
             model_name='sale',
             name='amount',
-            field=models.DecimalField(decimal_places=2, max_digits=8, verbose_name='Amount'),
+            field=models.DecimalField(
+                decimal_places=2, max_digits=8, verbose_name='Amount'),
         ),
     ]

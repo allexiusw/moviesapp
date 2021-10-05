@@ -1,7 +1,7 @@
 from decimal import Decimal
 from django.contrib.admin.models import LogEntry
 
-from rest_framework import serializers, viewsets, status, permissions
+from rest_framework import viewsets, status, permissions
 from rest_framework.mixins import ListModelMixin
 from rest_framework.response import Response
 from rest_framework.decorators import action

@@ -161,11 +161,48 @@ class MovieTestCase(APITestCase):
         Return:
             Messages.MOVIE_UNAVAILABLE -> str
         '''
-        movie_unavailabe = {**self.movie, **{'availability': True}}
+        movie = Movie.objects.create(
+            **self.movie
+        )
+        movie_url = reverse('movie-set-unavailable', args=[movie.id])
+        response = self.client.patch(movie_url, data=self.movie)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_set_movie_available_as_admin(self):
+        '''Test movie set as available as admin should be success.
+
+        Endpoint tested:
+            api/movies/<:id>/set_available/ PATCH
+
+        Return:
+            Messages.MOVIE_AVAILABLE -> str
+        '''
+        self.authclient = APIClient()
+        self.authclient.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+        movie_unavailabe = {**self.movie, **{'availability': False}}
+        movie = Movie.objects.create(
+            **movie_unavailabe
+        )
+        movie_url = reverse('movie-set-available', args=[movie.id])
+        response = self.authclient.patch(movie_url, data=self.movie)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.data.get('message'), Messages.MOVIE_AVAILABLE)
+
+    def test_set_movie_available_as_normaluser(self):
+        '''Test movie set as available normal user should fail.
+
+        Endpoint tested:
+            api/movies/<:id>/set_available/ PATCH
+
+        Return:
+            Messages.MOVIE_AVAILABLE -> str
+        '''
+        movie_unavailabe = {**self.movie, **{'availability': False}}
         movie = Movie.objects.create(
             **movie_unavailabe,
         )
-        movie_url = reverse('movie-set-unavailable', args=[movie.id])
+        movie_url = reverse('movie-set-available', args=[movie.id])
         response = self.client.patch(movie_url, data=self.movie)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 

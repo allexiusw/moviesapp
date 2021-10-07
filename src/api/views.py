@@ -9,6 +9,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 from core.models import Movie, Rent, Sale
+from api.filters import MovieFilterSet
 from api.serializers import (
     LogEntryMovieSerializer,
     MovieImageSerializer,
@@ -16,7 +17,6 @@ from api.serializers import (
     RentSerializer,
     SaleSerializer,
 )
-
 from api.constants import Messages
 
 
@@ -26,6 +26,14 @@ class MovieViewSet(viewsets.ModelViewSet):
     '''
     serializer_class = MovieSerializer
     queryset = Movie.objects.all()
+    filter_class = MovieFilterSet
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        # Ensure other user not admin user will show only available movies
+        if not self.request.user.is_superuser:
+            queryset = queryset.filter(availability=True)
+        return queryset
 
     def create(self, request, *args, **kwargs):
         ''''Perform create and take care of validation when no images

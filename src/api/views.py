@@ -86,7 +86,7 @@ class MovieViewSet(viewsets.ModelViewSet):
         return Response({'message': Messages.MOVIE_UNAVAILABLE})
 
     @action(
-        detail=True, methods=['patch'], permission_classes=[IsAuthenticated])
+        detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def rent_it(self, request, pk=None):
         '''Allow any user logged in rent a movie that has stock
 
@@ -99,14 +99,27 @@ class MovieViewSet(viewsets.ModelViewSet):
         movie = self.get_object()
         serializer = RentSerializer(data={
             'movie': movie.id,
-            'amount': movie.rental_price * Decimal(request.data['quantity']),
+            'due_date': request.data['due_date'],
             'quantity': request.data['quantity'],
             'rented_by': request.user.id,
         })
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-        return Response(
-            {'message': Messages.RENT_SUCCESSFULLY}, status=status.HTTP_200_OK)
+            response = Response(
+                {
+                    'message': Messages.RENT_SUCCESSFULLY,
+                    'data': serializer.data
+                },
+                status=status.HTTP_200_OK,
+            )
+        else:
+            response = response = Response({
+                    'message': Messages.RENT_SUCCESSFULLY,
+                    'data': serializer.errors
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        return response
 
     @action(
         detail=True, methods=['patch'], permission_classes=[IsAuthenticated])

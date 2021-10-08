@@ -1,4 +1,5 @@
 # Create your tests here.
+from datetime import datetime
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -225,3 +226,52 @@ class MovieTestCase(APITestCase):
         movie = Movie.objects.filter(pk=movie.id)
         self.assertFalse(movie.exists())
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_rent_available_movie_as_anonymous(self):
+        '''Test rent a movie as anonymous user.
+
+        Endpoint tested:
+            api/movies/<:id>/rent-it/ PATCH
+
+        Return:
+            Messages.HTTP_401_UNAUTHORIZED -> str
+        '''
+        movie = {**self.movie, **{'availability': True}}
+        movie = Movie.objects.create(
+            **movie
+        )
+        movie_url = reverse('movie-rent-it', args=[movie.id])
+        response = self.client.post(movie_url, data=self.movie)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_rent_available_movie_as_normaluser(self):
+        '''Test rent an availabe movie as normal user, should succed.
+
+        Endpoint tested:
+            api/movies/<:id>/rent_it/ POST
+
+        Return:
+            Messages.RENT_SUCCESSFULLY -> str
+        '''
+        self.authclient = APIClient()
+        self.authclient.credentials(
+            HTTP_AUTHORIZATION='Token ' + self.tokennotadmin)
+        movie = Movie.objects.create(
+            **self.movie
+        )
+        rent_url = reverse('movie-rent-it', args=[movie.id])
+        data = {
+            'quantity': 2,
+            'due_date': "10-10-2021",
+        }
+        response = self.authclient.post(rent_url, data=data)
+        days = (datetime.strptime(
+            data['due_date'], '%d-%m-%Y').date() - datetime.now().date()).days
+        movie = Movie.objects.get(pk=movie.id)
+        print(data['quantity'], movie.rental_price, days)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['message'], Messages.RENT_SUCCESSFULLY)
+        self.assertEqual(
+            movie.rent_set.first().amount,
+            data['quantity'] * movie.rental_price * days
+        )

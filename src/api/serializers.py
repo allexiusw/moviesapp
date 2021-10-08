@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.admin.models import LogEntry, ACTION_FLAG_CHOICES
 
 from rest_framework import serializers
@@ -38,6 +40,8 @@ class RentSerializer(serializers.ModelSerializer):
     User will use it to perform CRUD action in database and map this
     actions to HTTP verbs.
     '''
+    amount = serializers.IntegerField(required=False)
+    due_date = serializers.DateField()
 
     class Meta:
         fields = (
@@ -59,10 +63,16 @@ class RentSerializer(serializers.ModelSerializer):
         quantity = attrs['quantity']
         if not quantity > 0:
             raise serializers.ValidationError(
-                {'message': Messages.RENT_QUANTITY_LOW})
+                {'quantity': Messages.RENT_QUANTITY_LOW})
         if not quantity <= attrs['movie'].stock:
             raise serializers.ValidationError(
-                {'message': Messages.RENT_QUANTITY_NOT_AVAI})
+                {'quantity': Messages.RENT_QUANTITY_NOT_AVAI})
+        date_now = datetime.now().date()
+        if attrs['due_date'] <= date_now:
+            raise serializers.ValidationError(
+                {'due_date': Messages.DUE_DATE_TOO_LONG})
+        days = (attrs['due_date'] - date_now).days
+        attrs['amount'] = quantity * attrs['movie'].rental_price * days
         return attrs
 
 

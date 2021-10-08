@@ -46,7 +46,7 @@ class MovieImage(models.Model):
 
 def get_due_date(days=7) -> datetime:
     '''Return the due day which will be 7 later from now'''
-    return datetime.now()+timedelta(days=days)
+    return (datetime.now()+timedelta(days=days)).date
 
 
 class Rent(models.Model):
@@ -54,18 +54,34 @@ class Rent(models.Model):
 
     rented_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
-    due_date = models.DateField(_("Due Date"), default=get_due_date)
+    due_date = models.DateField(_("Due Date"))
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     quantity = models.IntegerField(_("Quantity"))
     returned = models.BooleanField(_("Is Returned"), default=False)
-    returned_at = models.DateTimeField(_("Returned At"), blank=True, null=True)
-    extra_charge = models.DecimalField(
-        _("Extra Charge"), max_digits=8, decimal_places=2, default=0.0)
+    returned_at = models.DateField(_("Returned At"), blank=True, null=True)
+    is_paid = models.BooleanField(_("Is paid?"), default=False)
     amount = models.DecimalField(_("Amount"), max_digits=8, decimal_places=2)
 
     class Meta:
         verbose_name = _("Rent")
         verbose_name_plural = _("Rents")
+
+    def __str__(self) -> str:
+        '''Return the representation of each row'''
+        return f'{self.pk} - {self.movie.title}'
+
+
+class ExtraCharge(models.Model):
+    '''Manage extra charges when returning movies'''
+    created_at = models.DateField(auto_now_add=True)
+    amount = models.DecimalField(
+        _("Amount"), max_digits=8, decimal_places=2, default=0.0)
+    is_paid = models.BooleanField(_("Is paid?"), default=False)
+    paid_at = models.DateTimeField(_("Paid at"), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("Extra charge")
+        verbose_name_plural = _("Extra charges")
 
     def __str__(self) -> str:
         '''Return the representation of each row'''

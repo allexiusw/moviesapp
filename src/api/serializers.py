@@ -53,7 +53,7 @@ class RentSerializer(serializers.ModelSerializer):
             'quantity',
             'returned',
             'returned_at',
-            'extra_charge',
+            'is_paid',
             'amount',
         )
         model = Rent

@@ -215,3 +215,6 @@ CI = os.environ.get('CI', False)
 if not DEBUG and not CI:
     import django_heroku
     django_heroku.settings(locals())
+
+STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY', 'Your public key')
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', 'Your secret key')

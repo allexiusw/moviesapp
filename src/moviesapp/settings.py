@@ -31,7 +31,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG', True)
+DEBUG = os.getenv('DEBUG', True)
 
 ALLOWED_HOSTS = ['localhost', 'secure-crag-96021.herokuapp.com']
 
@@ -106,7 +106,7 @@ WSGI_APPLICATION = 'moviesapp.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
-if env('CI', False) or TESTING:
+if os.environ.get('CI', False) or TESTING:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -193,13 +193,13 @@ SWAGGER_SETTINGS = {
     }
 }
 
-EMAIL_HOST = env('EMAIL_HOST', 'localhost')
-EMAIL_PORT = env('EMAIL_PORT', '1025')
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', '')
-EMAIL_HOST_USER = env('EMAIL_HOST_USER', '')
-DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', 'webmaster@localhost')
-EMAIL_USE_TLS = env('EMAIL_USE_TLS', 'False').lower() == "true"
-EMAIL_USE_SSL = env('EMAIL_USE_SSL', 'False').lower() == "true"
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'localhost')
+EMAIL_PORT = os.getenv('EMAIL_PORT', '1025')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'webmaster@localhost')
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'False').lower() == "true"
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False').lower() == "true"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

@@ -55,14 +55,13 @@ class MovieViewSet(viewsets.ModelViewSet):
         serializer = MovieImageSerializer(data=data, many=many)
         if not serializer.is_valid():
             headers = self.get_success_headers(serializer.data)
-            data = Response(
+            return Response(
                 serializer.data,
                 status=status.HTTP_400_BAD_REQUEST,
                 headers=headers)
-        else:
-            # Save Movie before, we need the id to relate with all MovieImage
-            data = super().create(request, *args, **kwargs)
-            serializer.save(movie_id=data.data.get('id'))
+        # Save Movie before, we need the id to relate with all MovieImage
+        data = super().create(request, *args, **kwargs)
+        serializer.save(movie_id=data.data.get('id'))
         return data
 
     @action(detail=True, methods=['patch'])
@@ -125,16 +124,14 @@ class MovieViewSet(viewsets.ModelViewSet):
                     },
                     "quantity": 1,
                 }], mode="payment")
-            response = Response({
+            return Response({
                     'message': Messages.RENT_SUCCESSFULLY,
                     'session_id': session.id,
                     'rent': serializer.data,
                 }, status=status.HTTP_201_CREATED)
-        else:
-            response = Response({
-                    'data': serializer.errors
-                }, status=status.HTTP_400_BAD_REQUEST)
-        return response
+        return Response({
+                'data': serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
 
     @action(
         detail=True, methods=['patch'], permission_classes=[IsAuthenticated])

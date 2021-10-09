@@ -6,3 +6,4 @@ psycopg2-binary==2.8.6
 django-cors-headers==3.9.0
 django-filter==21.1
 stripe==2.60.0
+django-environ==0.3.1

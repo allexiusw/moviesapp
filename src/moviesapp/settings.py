@@ -28,12 +28,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv(
-    'SECRET_KEY',
-    'django-insecure-_b2cx9)_q2$+7w+mdw7*_vavahm+9@*#1ja#h5=lu+dm(v8%*o')
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', True)
+DEBUG = env('DEBUG', True)
 
 ALLOWED_HOSTS = ['localhost', 'secure-crag-96021.herokuapp.com']
 
@@ -108,7 +106,7 @@ WSGI_APPLICATION = 'moviesapp.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
-if os.environ.get('CI', False) or TESTING:
+if env('CI', False) or TESTING:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -195,13 +193,13 @@ SWAGGER_SETTINGS = {
     }
 }
 
-EMAIL_HOST = os.getenv('EMAIL_HOST', 'localhost')
-EMAIL_PORT = os.getenv('EMAIL_PORT', '1025')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'webmaster@localhost')
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'False').lower() == "true"
-EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False').lower() == "true"
+EMAIL_HOST = env('EMAIL_HOST', 'localhost')
+EMAIL_PORT = env('EMAIL_PORT', '1025')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', '')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER', '')
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', 'webmaster@localhost')
+EMAIL_USE_TLS = env('EMAIL_USE_TLS', 'False').lower() == "true"
+EMAIL_USE_SSL = env('EMAIL_USE_SSL', 'False').lower() == "true"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
@@ -220,5 +218,5 @@ if not DEBUG and not CI:
     import django_heroku
     django_heroku.settings(locals())
 
-STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY', 'Your public key')
-STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', 'Your secret key')
+STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY')
+STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')

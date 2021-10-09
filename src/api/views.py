@@ -127,6 +127,7 @@ class MovieViewSet(viewsets.ModelViewSet):
             return Response({
                     'message': Messages.RENT_SUCCESSFULLY,
                     'session_id': session.id,
+                    'session_url': session.url,
                     'rent': serializer.data,
                 }, status=status.HTTP_201_CREATED)
         return Response({

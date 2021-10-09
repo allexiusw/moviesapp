@@ -32,13 +32,15 @@ class MovieTestCase(APITestCase):
             is_superuser=True,
             is_active=True,
         )
-        user_normal = User.objects.create(
+        self.normal_user = User.objects.create(
             username='notadmin',
             password='SuperSecret',
             is_active=True,
+            email='william.al1379@gmail.com',
         )
         self.token = str(Token.objects.create(user=user))
-        self.tokennotadmin = str(Token.objects.create(user=user_normal))
+        self.tokennotadmin = str(Token.objects.create(
+            user=self.normal_user))
 
     def test_create_movie_as_admin_any_images(self):
         '''Test create images as an admin without at least one image should fail.
@@ -263,13 +265,13 @@ class MovieTestCase(APITestCase):
         data = {
             'quantity': 2,
             'due_date': "10-10-2021",
+            'rented_by': self.normal_user,
         }
         response = self.authclient.post(rent_url, data=data)
         days = (datetime.strptime(
             data['due_date'], '%d-%m-%Y').date() - datetime.now().date()).days
         movie = Movie.objects.get(pk=movie.id)
-        print(data['quantity'], movie.rental_price, days)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['message'], Messages.RENT_SUCCESSFULLY)
         self.assertEqual(
             movie.rent_set.first().amount,

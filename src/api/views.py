@@ -1,5 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
+from django.conf import settings
+
 from django.contrib.admin.models import LogEntry
 
 from rest_framework import viewsets, status, permissions
@@ -7,6 +9,8 @@ from rest_framework.mixins import ListModelMixin
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+
+import stripe
 
 from core.models import Movie, Rent, Sale
 from api.filters import MovieFilterSet
@@ -93,8 +97,9 @@ class MovieViewSet(viewsets.ModelViewSet):
         Endpoint api/movies/rent-it/<:pk>/
             quantity: N
         return:
-            Message.MOVIE_RENTED -> str (HTTP 200)
-            Message.MOVIE_WITHOUT_STOCK (HTTP 400)
+            Message.RENT_SUCCESSFULLY -> str (HTTP 200)
+                And return the session.id
+            Json with validated data (HTTP 400)
         '''
         movie = self.get_object()
         serializer = RentSerializer(data={
@@ -104,21 +109,29 @@ class MovieViewSet(viewsets.ModelViewSet):
             'rented_by': request.user.id,
         })
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            response = Response(
-                {
+            rent = serializer.save()
+            stripe.api_key = settings.STRIPE_SECRET_KEY
+            session = stripe.checkout.Session.create(
+                success_url="https://example.com/success",
+                cancel_url="https://example.com/cancel",
+                payment_method_types=["card"],
+                line_items=[{
+                    'price_data': {
+                        'currency': 'usd',
+                        'unit_amount': int(rent.amount * 100),
+                        'product_data': {'name': rent.movie.title}
+                    },
+                    "quantity": 1,
+                }], mode="payment")
+            response = Response({
                     'message': Messages.RENT_SUCCESSFULLY,
-                    'data': serializer.data
-                },
-                status=status.HTTP_200_OK,
-            )
+                    'session_id': session.id,
+                    'rent': serializer.data,
+                }, status=status.HTTP_201_CREATED)
         else:
-            response = response = Response({
-                    'message': Messages.RENT_SUCCESSFULLY,
+            response = Response({
                     'data': serializer.errors
-                },
-                status=status.HTTP_400_BAD_REQUEST
-            )
+                }, status=status.HTTP_400_BAD_REQUEST)
         return response
 
     @action(

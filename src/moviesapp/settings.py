@@ -220,3 +220,5 @@ if not DEBUG and not CI:
 
 STRIPE_PUBLIC_KEY = env('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
+
+YOUR_SERVER = 'http://localhost:8000/'

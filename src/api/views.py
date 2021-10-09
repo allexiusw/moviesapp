@@ -112,8 +112,10 @@ class MovieViewSet(viewsets.ModelViewSet):
             rent = serializer.save()
             stripe.api_key = settings.STRIPE_SECRET_KEY
             session = stripe.checkout.Session.create(
-                success_url="https://example.com/success",
-                cancel_url="https://example.com/cancel",
+                # Not use reverse here 'cause we don't care about UI
+                # in this project.
+                success_url=f'{settings.YOUR_SERVER}success/',
+                cancel_url=f'{settings.YOUR_SERVER}cancel/',
                 payment_method_types=["card"],
                 line_items=[{
                     'price_data': {

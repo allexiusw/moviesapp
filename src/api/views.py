@@ -158,8 +158,10 @@ class MovieViewSet(viewsets.ModelViewSet):
         })
         if serializer.is_valid(raise_exception=True):
             serializer.save()
+            return Response(
+                {'message': Messages.MOVIE_BUYED}, status=status.HTTP_200_OK)
         return Response(
-            {'message': Messages.MOVIE_BUYED}, status=status.HTTP_200_OK)
+            {'data': serializer.data}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RentViewSet(viewsets.ModelViewSet):

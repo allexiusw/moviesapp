@@ -1,8 +1,10 @@
 from datetime import datetime
 from decimal import Decimal
-from django.conf import settings
 
+from django.conf import settings
+from django.http import HttpResponse
 from django.contrib.admin.models import LogEntry
+from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework import viewsets, status, permissions
 from rest_framework.mixins import ListModelMixin
@@ -203,3 +205,28 @@ class SaleViewSet(viewsets.ModelViewSet):
         if not self.request.user.is_superuser:
             queryset = queryset.filter(rented_by=self.request.user)
         return queryset
+
+
+@csrf_exempt
+def stripe_webhook(request):
+    '''It listen'''
+    payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    event = None
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+        )
+    except ValueError as e:
+        print(e)
+        return HttpResponse(status=400)
+    except stripe.error.SignatureVerificationError as e:
+        print(e)
+        return HttpResponse(status=400)
+
+    # Handle the checkout.session.completed event
+    if event['type'] == 'checkout.session.completed':
+        # Set rent payment as completed (is_paid=True)
+        pass
+    return HttpResponse(status=200)

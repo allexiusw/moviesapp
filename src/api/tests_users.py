@@ -76,10 +76,7 @@ class UserTestCase(APITestCase):
         # UID and Tokenconfirmation are sent to the email address
         # In this case we get this data in this way because is test env.
 
-        data = {
-            'uid': uuid.uuid4,
-            'token': uuid.uuid4,
-        }
+        data = {'uid': uuid.uuid4, 'token': uuid.uuid4}
         response = self.client.post(self.user_activate_url, data=data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 

@@ -121,9 +121,7 @@ class MovieTestCase(APITestCase):
         '''
         self.authclient = APIClient()
         self.authclient.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
-        movie = Movie.objects.create(
-            **self.movie
-        )
+        movie = Movie.objects.create(**self.movie)
         with open(f'{settings.STATIC_ROOT}/test.png', 'rb') as file:
             self.movie['images'] = [file]
             self.movie['title'] = 'Other title'
@@ -146,9 +144,7 @@ class MovieTestCase(APITestCase):
         self.authclient = APIClient()
         self.authclient.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         # By default movies has availability=True
-        movie = Movie.objects.create(
-            **self.movie
-        )
+        movie = Movie.objects.create(**self.movie)
         movie_url = reverse('movie-set-unavailable', args=[movie.id])
         response = self.authclient.patch(movie_url, data=self.movie)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -164,9 +160,7 @@ class MovieTestCase(APITestCase):
         Return:
             Messages.MOVIE_UNAVAILABLE -> str
         '''
-        movie = Movie.objects.create(
-            **self.movie
-        )
+        movie = Movie.objects.create(**self.movie)
         movie_url = reverse('movie-set-unavailable', args=[movie.id])
         response = self.client.patch(movie_url, data=self.movie)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -183,9 +177,7 @@ class MovieTestCase(APITestCase):
         self.authclient = APIClient()
         self.authclient.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
         movie_unavailabe = {**self.movie, **{'availability': False}}
-        movie = Movie.objects.create(
-            **movie_unavailabe
-        )
+        movie = Movie.objects.create(**movie_unavailabe)
         movie_url = reverse('movie-set-available', args=[movie.id])
         response = self.authclient.patch(movie_url, data=self.movie)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -202,9 +194,7 @@ class MovieTestCase(APITestCase):
             Messages.MOVIE_AVAILABLE -> str
         '''
         movie_unavailabe = {**self.movie, **{'availability': False}}
-        movie = Movie.objects.create(
-            **movie_unavailabe,
-        )
+        movie = Movie.objects.create(**movie_unavailabe)
         movie_url = reverse('movie-set-available', args=[movie.id])
         response = self.client.patch(movie_url, data=self.movie)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -220,9 +210,7 @@ class MovieTestCase(APITestCase):
         '''
         self.authclient = APIClient()
         self.authclient.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
-        movie = Movie.objects.create(
-            **self.movie
-        )
+        movie = Movie.objects.create(**self.movie)
         user_update_url = reverse('movie-detail', args=[movie.id])
         response = self.authclient.delete(user_update_url)
         movie = Movie.objects.filter(pk=movie.id)
@@ -239,9 +227,7 @@ class MovieTestCase(APITestCase):
             Messages.HTTP_401_UNAUTHORIZED -> str
         '''
         movie = {**self.movie, **{'availability': True}}
-        movie = Movie.objects.create(
-            **movie
-        )
+        movie = Movie.objects.create(**movie)
         movie_url = reverse('movie-rent-it', args=[movie.id])
         response = self.client.post(movie_url, data=self.movie)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -258,9 +244,7 @@ class MovieTestCase(APITestCase):
         self.authclient = APIClient()
         self.authclient.credentials(
             HTTP_AUTHORIZATION='Token ' + self.tokennotadmin)
-        movie = Movie.objects.create(
-            **self.movie
-        )
+        movie = Movie.objects.create(**self.movie)
         rent_url = reverse('movie-rent-it', args=[movie.id])
         data = {
             'quantity': 2,

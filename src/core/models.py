@@ -65,7 +65,7 @@ class Rent(models.Model):
     payment_reference = models.CharField(
         _("Payment reference"), max_length=100, blank=True, null=True)
     payment_url = models.URLField(
-        _("Payment reference"), blank=True, null=True)
+        _("Payment url"), blank=True, null=True)
 
     class Meta:
         verbose_name = _("Rent")

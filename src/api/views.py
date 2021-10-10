@@ -116,6 +116,8 @@ class MovieViewSet(viewsets.ModelViewSet):
                 success_url=f'{settings.YOUR_SERVER}success/',
                 cancel_url=f'{settings.YOUR_SERVER}cancel/',
                 payment_method_types=["card"],
+                # It is the Rent pk to meet session_id with rent
+                client_reference_id=rent.id,
                 line_items=[{
                     'price_data': {
                         'currency': 'usd',

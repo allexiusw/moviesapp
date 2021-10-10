@@ -4,10 +4,10 @@ from django.urls import reverse
 from django.utils.html import escape
 from django.utils.safestring import SafeString, mark_safe
 from django.contrib import admin
-from django.forms.models import BaseInlineFormSet
 from django.contrib.admin.models import LogEntry,  DELETION
+from django.forms.models import BaseInlineFormSet
 
-from core.models import Movie, MovieImage, Purchase, Rent, Sale
+from core.models import Movie, MovieImage, Rent, Sale
 
 
 if settings.DEBUG:
@@ -63,5 +63,4 @@ if settings.DEBUG:
     admin.site.register(Movie, AdminMovie)
     admin.site.register(LogEntry, LogEntryAdmin)
     admin.site.register(Rent)
-    admin.site.register(Purchase)
     admin.site.register(Sale)

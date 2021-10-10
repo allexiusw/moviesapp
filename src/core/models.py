@@ -61,6 +61,8 @@ class Rent(models.Model):
     returned_at = models.DateField(_("Returned At"), blank=True, null=True)
     is_paid = models.BooleanField(_("Is paid?"), default=False)
     amount = models.DecimalField(_("Amount"), max_digits=8, decimal_places=2)
+    payment_reference = models.CharField(
+        _("Payment reference"), max_length=100, blank=True, null=True)
 
     class Meta:
         verbose_name = _("Rent")
@@ -86,22 +88,6 @@ class ExtraCharge(models.Model):
     def __str__(self) -> str:
         '''Return the representation of each row'''
         return f'{self.pk} - {self.movie.title}'
-
-
-class Purchase(models.Model):
-    '''This entity will save all the rent purchases'''
-    rent = models.OneToOneField(Rent, on_delete=models.CASCADE)
-    date = models.DateTimeField(_("Date"), default=datetime.now)
-    created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
-    total = models.DecimalField(_("Total"), max_digits=8, decimal_places=2)
-
-    class Meta:
-        verbose_name = _("Purchase")
-        verbose_name_plural = _("Purchases")
-
-    def __str__(self) -> str:
-        '''Return the representation of each row'''
-        return f'{self.date} - {self.rent} - {self.total}'
 
 
 class Sale(models.Model):

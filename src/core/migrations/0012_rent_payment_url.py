@@ -13,6 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='rent',
             name='payment_url',
-            field=models.URLField(blank=True, null=True, verbose_name='Payment reference'),
+            field=models.URLField(
+                blank=True, null=True, verbose_name='Payment reference'),
         ),
     ]

@@ -64,6 +64,8 @@ class Rent(models.Model):
     amount = models.DecimalField(_("Amount"), max_digits=8, decimal_places=2)
     payment_reference = models.CharField(
         _("Payment reference"), max_length=100, blank=True, null=True)
+    payment_url = models.URLField(
+        _("Payment reference"), blank=True, null=True)
 
     class Meta:
         verbose_name = _("Rent")

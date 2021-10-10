@@ -131,6 +131,7 @@ class MovieViewSet(viewsets.ModelViewSet):
                     "quantity": 1,
                 }], mode="payment")
             rent.payment_reference = session.id
+            rent.payment_url = session.url
             rent.save()
             return Response({
                     'message': Messages.RENT_SUCCESSFULLY,

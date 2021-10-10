@@ -11,4 +11,4 @@ class Messages(object):
     RENT_QUANTITY_NOT_AVAI = _("Rent quantity not available")
     RENT_SUCCESSFULLY = _("Rent successfully")
     MOVIE_BUYED = _("Movie buyed successfully")
-    DUE_DATE_TOO_LONG = _("Due date too low")
+    DUE_DATE_TOO_LOW = _("Due date too low")

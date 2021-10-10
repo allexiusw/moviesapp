@@ -70,7 +70,7 @@ class RentSerializer(serializers.ModelSerializer):
         date_now = datetime.now().date()
         if attrs['due_date'] <= date_now:
             raise serializers.ValidationError(
-                {'due_date': Messages.DUE_DATE_TOO_LONG})
+                {'due_date': Messages.DUE_DATE_TOO_LOW})
         days = (attrs['due_date'] - date_now).days
         attrs['amount'] = quantity * attrs['movie'].rental_price * days
         return attrs

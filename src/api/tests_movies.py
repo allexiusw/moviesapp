@@ -1,5 +1,5 @@
 # Create your tests here.
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -246,14 +246,15 @@ class MovieTestCase(APITestCase):
             HTTP_AUTHORIZATION='Token ' + self.tokennotadmin)
         movie = Movie.objects.create(**self.movie)
         rent_url = reverse('movie-rent-it', args=[movie.id])
+        date_now = datetime.now().date()
+        due_date = date_now + timedelta(days=2)
         data = {
             'quantity': 2,
-            'due_date': "10-10-2021",
+            'due_date': due_date.strftime("%d-%m-%Y"),
             'rented_by': self.normal_user,
         }
         response = self.authclient.post(rent_url, data=data)
-        days = (datetime.strptime(
-            data['due_date'], '%d-%m-%Y').date() - datetime.now().date()).days
+        days = (due_date - datetime.now().date()).days
         movie = Movie.objects.get(pk=movie.id)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['message'], Messages.RENT_SUCCESSFULLY)

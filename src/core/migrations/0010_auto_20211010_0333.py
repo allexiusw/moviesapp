@@ -12,12 +12,20 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='extracharge',
-            options={'verbose_name': 'Extra charge', 'verbose_name_plural': 'Extra charges'},
+            options={
+                'verbose_name': 'Extra charge',
+                'verbose_name_plural': 'Extra charges',
+            },
         ),
         migrations.AddField(
             model_name='rent',
             name='payment_reference',
-            field=models.CharField(blank=True, max_length=100, null=True, verbose_name='Payment reference'),
+            field=models.CharField(
+                blank=True,
+                max_length=100,
+                null=True,
+                verbose_name='Payment reference'
+            ),
         ),
         migrations.DeleteModel(
             name='Purchase',

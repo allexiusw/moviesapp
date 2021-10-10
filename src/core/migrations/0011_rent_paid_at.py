@@ -13,6 +13,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='rent',
             name='paid_at',
-            field=models.DateTimeField(blank=True, null=True, verbose_name='Paid at'),
+            field=models.DateTimeField(
+                blank=True, null=True, verbose_name='Paid at'),
         ),
     ]

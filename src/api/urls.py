@@ -4,7 +4,12 @@ from django.conf import settings
 
 from rest_framework.routers import DefaultRouter
 
-from api.views import LogEntryMovieViewSet, MovieViewSet, RentViewSet
+from api.views import (
+    LogEntryMovieViewSet,
+    MovieViewSet,
+    RentViewSet,
+    stripe_webhook,
+)
 
 
 swaggerurls = []
@@ -50,4 +55,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
+    path('webhooks/stripe/', stripe_webhook, name='stripe-webhook'),
 ] + swaggerurls

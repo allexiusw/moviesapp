@@ -1,0 +1,8 @@
+Rent payment completed but invoice not found
+
+Hello.
+Congratulations you completed the payment successfully
+Because we have some problems processing your payment please save this id: {{id}}
+Our team will checkout the details and will contact you as soon as possible.
+
+Thanks for your patient!

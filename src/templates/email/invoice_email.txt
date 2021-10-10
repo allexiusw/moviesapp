@@ -1,0 +1,9 @@
+Rent payment completed
+Hello {{rent.rented_by.get_fullname}}. Congratulations you completed the payment successfully
+
+Product Name: {{movie.title}}
+Price: {{rent.amount}}
+Paid date: {{rent.paid_date}}
+Due date: {{rent.due_date}}
+
+Enjoy this movie!!!

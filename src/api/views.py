@@ -5,6 +5,8 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.contrib.admin.models import LogEntry
 from django.views.decorators.csrf import csrf_exempt
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
 
 from rest_framework import viewsets, status, permissions
 from rest_framework.mixins import ListModelMixin
@@ -227,8 +229,31 @@ def stripe_webhook(request):
         print(e)
         return HttpResponse(status=400)
 
-    # Handle the checkout.session.completed event
-    if event['type'] == 'checkout.session.completed':
-        # Set rent payment as completed (is_paid=True)
-        pass
+    # Handle succeeded charge
+    if event['type'] == 'charge.succeeded':
+        session = event['data']['object']
+        rent = Rent.objects.filter(payment_reference=session["id"]).first()
+        send_to = [settings.EMAIL_ADMINISTRATOR]
+        title = 'Payment succesfully but not found invoice.'
+        if rent is not None:
+            send_to.append(rent.rented_by.email)
+            title = f'Payment successfully: {rent.movie.title}'
+            rent.is_paid = True
+            rent.paid_at = datetime.now()
+            rent.save()
+            context = {'movie': rent.movie, 'rent': rent}
+            template_txt = 'email/invoice_email.txt'
+            template_html = 'email/invoice_email.html'
+        else:
+            template_txt = 'email/invoice_notfound.txt'
+            template_html = 'email/invoice_notfound.html'
+            context = {'id': session["id"]}
+            msg_plain = render_to_string(template_txt, context=context)
+            msg_html = render_to_string(template_html, context=context)
+            send_mail(
+                title,
+                msg_plain,
+                settings.DEFAULT_FROM_EMAIL,
+                send_to,
+                html_message=msg_html)
     return HttpResponse(status=200)

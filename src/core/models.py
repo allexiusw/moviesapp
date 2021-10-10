@@ -60,6 +60,7 @@ class Rent(models.Model):
     returned = models.BooleanField(_("Is Returned"), default=False)
     returned_at = models.DateField(_("Returned At"), blank=True, null=True)
     is_paid = models.BooleanField(_("Is paid?"), default=False)
+    paid_at = models.DateTimeField(_("Paid at"), blank=True, null=True)
     amount = models.DecimalField(_("Amount"), max_digits=8, decimal_places=2)
     payment_reference = models.CharField(
         _("Payment reference"), max_length=100, blank=True, null=True)

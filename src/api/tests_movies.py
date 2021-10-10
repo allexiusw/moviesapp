@@ -18,7 +18,9 @@ class MovieTestCase(APITestCase):
     user_create_url = reverse('movie-list')
 
     def setUp(self) -> None:
-        '''create a new user making a post request to djoser endpoint'''
+        '''create a new user making a post request to djoser endpoint
+        And 2 user normal and superadmin.
+        '''
         self.movie = {
             'title': 'Demo movie',
             'description': 'Demo movie 123',

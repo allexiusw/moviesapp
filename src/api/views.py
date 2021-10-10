@@ -128,6 +128,8 @@ class MovieViewSet(viewsets.ModelViewSet):
                     },
                     "quantity": 1,
                 }], mode="payment")
+            rent.payment_reference = session.id
+            rent.save()
             return Response({
                     'message': Messages.RENT_SUCCESSFULLY,
                     'session_id': session.id,
@@ -209,7 +211,7 @@ class SaleViewSet(viewsets.ModelViewSet):
 
 @csrf_exempt
 def stripe_webhook(request):
-    '''It listen'''
+    '''It listen payment updates comming from Stripe'''
     payload = request.body
     sig_header = request.META['HTTP_STRIPE_SIGNATURE']
     event = None

@@ -130,7 +130,7 @@ class MovieViewSet(viewsets.ModelViewSet):
                     },
                     "quantity": 1,
                 }], mode="payment")
-            rent.payment_reference = session.id
+            rent.payment_reference = session.payment_intent
             rent.payment_url = session.url
             rent.save()
             return Response({
@@ -233,7 +233,8 @@ def stripe_webhook(request):
     # Handle succeeded charge
     if event['type'] == 'charge.succeeded':
         session = event['data']['object']
-        rent = Rent.objects.filter(payment_reference=session["id"]).first()
+        id = session['payment_intent']
+        rent = Rent.objects.filter(payment_reference=id).first()
         send_to = [settings.EMAIL_ADMINISTRATOR]
         title = 'Payment succesfully but not found invoice.'
         if rent is not None:
@@ -248,13 +249,13 @@ def stripe_webhook(request):
         else:
             template_txt = 'email/invoice_notfound.txt'
             template_html = 'email/invoice_notfound.html'
-            context = {'id': session["id"]}
-            msg_plain = render_to_string(template_txt, context=context)
-            msg_html = render_to_string(template_html, context=context)
-            send_mail(
-                title,
-                msg_plain,
-                settings.DEFAULT_FROM_EMAIL,
-                send_to,
-                html_message=msg_html)
+            context = {'id': id}
+        msg_plain = render_to_string(template_txt, context=context)
+        msg_html = render_to_string(template_html, context=context)
+        send_mail(
+            title,
+            msg_plain,
+            settings.DEFAULT_FROM_EMAIL,
+            send_to,
+            html_message=msg_html)
     return HttpResponse(status=200)

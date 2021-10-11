@@ -209,8 +209,10 @@ class RentViewSet(viewsets.ModelViewSet):
         rent.returned = True
         rent.returned_at = datetime.now()
         rent.save()
-        if rent.due_date < datetime.now().date():
-            ExtraCharge.objects.create(rent=rent, amount=10)
+        days = (rent.due_date - datetime.now().date()).days
+        if days < 0:
+            amount = days * rent.movie.rental_price * rent.quantity
+            ExtraCharge.objects.create(rent=rent, amount=amount)
             return Response(
                 {'message': "Extra charges"}, status=status.HTTP_201_CREATED)
         return Response(

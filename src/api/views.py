@@ -16,7 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 
 import stripe
 
-from core.models import Movie, Rent, Sale
+from core.models import ExtraCharge, Movie, Rent, Sale
 from api.filters import MovieFilterSet
 from api.serializers import (
     LogEntryMovieSerializer,
@@ -195,7 +195,7 @@ class RentViewSet(viewsets.ModelViewSet):
             serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     @action(
-        detail=True, methods=['patch'], permission_classes=[IsAuthenticated])
+        detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def return_movie(self, request, pk=None):
         '''Allow any user return his movies and generate extrapayment if needed
 
@@ -206,7 +206,11 @@ class RentViewSet(viewsets.ModelViewSet):
             Message.EXTRA_PAYMENT_GENERATED (HTTP 201)
         '''
         rent = self.get_object()
+        rent.returned = True
+        rent.returned_at = datetime.now()
+        rent.save()
         if rent.due_date < datetime.now().date():
+            ExtraCharge.objects.create(rent=rent, amount=10)
             return Response(
                 {'message': "Extra charges"}, status=status.HTTP_201_CREATED)
         return Response(

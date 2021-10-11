@@ -59,9 +59,7 @@ class RentTestCase(APITestCase):
             'quantity': 2,
             'due_date': due_date.strftime("%d-%m-%Y"),
         }
-        rent = self.authclient.post(self.rent_list_url, data=data)
-        print(rent.data)
+        self.authclient.post(self.rent_list_url, data=data)
         response = self.authclient.get(self.rent_list_url)
-        print(response)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)

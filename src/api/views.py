@@ -186,6 +186,32 @@ class RentViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(rented_by=self.request.user)
         return queryset
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(rented_by=request.user)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    @action(
+        detail=True, methods=['patch'], permission_classes=[IsAuthenticated])
+    def return_movie(self, request, pk=None):
+        '''Allow any user return his movies and generate extrapayment if needed
+
+        Endpoint api/rents/return-movie/<:pk>/
+
+        return:
+            Message.MOVIE_RETURNED -> str (HTTP 200)
+            Message.EXTRA_PAYMENT_GENERATED (HTTP 201)
+        '''
+        rent = self.get_object()
+        if rent.due_date < datetime.now().date():
+            return Response(
+                {'message': "Extra charges"}, status=status.HTTP_201_CREATED)
+        return Response(
+            {'data': "Returned"}, status=status.HTTP_200_OK)
+
 
 class LogEntryMovieViewSet(ListModelMixin, viewsets.GenericViewSet):
     '''Define the HTTP endpoint against the serializer mapping CRUD

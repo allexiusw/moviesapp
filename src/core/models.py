@@ -52,7 +52,8 @@ def get_due_date(days=7) -> datetime:
 class Rent(models.Model):
     '''Manage Rent entity and its fields'''
 
-    rented_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    rented_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=False, blank=True)
     created_at = models.DateTimeField(_("Created At"), auto_now_add=True)
     due_date = models.DateField(_("Due Date"))
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)

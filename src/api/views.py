@@ -170,6 +170,20 @@ class MovieViewSet(viewsets.ModelViewSet):
         return Response(
             {'data': serializer.data}, status=status.HTTP_400_BAD_REQUEST)
 
+    @action(
+        detail=True, methods=['patch'], permission_classes=[IsAuthenticated])
+    def like(self, request, pk=None):
+        '''Allow likes in movies by user.
+
+        Endpoint api/movies/like/<pk:int>/
+        return:
+            response -> HTTPResponse
+        '''
+        movie = self.get_object()
+        movie.likes.add(request.user)
+        return Response(
+            {'data': 'Liked'}, status=status.HTTP_200_OK)
+
 
 class RentViewSet(viewsets.ModelViewSet):
     '''Define the HTTP endpoint against the serializer mapping CRUD

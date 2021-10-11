@@ -264,3 +264,22 @@ class MovieTestCase(APITestCase):
             movie.rent_set.first().amount,
             data['quantity'] * movie.rental_price * days
         )
+
+    def test_like_movie(self):
+        '''Test like movie as normal user authenticated.
+
+        Endpoint tested:
+            api/movies/<:id>/like/ POST
+
+        Return:
+            response -> HTTP
+        '''
+        self.authclient = APIClient()
+        self.authclient.credentials(
+            HTTP_AUTHORIZATION='Token ' + self.tokennotadmin)
+        movie = Movie.objects.create(**self.movie)
+        movie_url = reverse('movie-like', args=[movie.id])
+        response = self.authclient.patch(movie_url)
+        movie.refresh_from_db()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(movie.likes.count(), 1)

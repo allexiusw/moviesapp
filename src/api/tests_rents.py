@@ -64,8 +64,8 @@ class RentTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
 
-    def test_rent_available_movie_without_extracharge(self):
-        '''Test rent an availabe movie as normal user, should succeed.
+    def test_return_movie_without_extracharge(self):
+        '''Test return movie as normal user without extracharge, should succeed.
 
         Endpoint tested:
             api/rents/<id:int>/return_it/ POST
@@ -89,12 +89,39 @@ class RentTestCase(APITestCase):
         rent_url = reverse('rent-return-movie', args=[rent.id])
         date_now = datetime.now().date()
         due_date = date_now + timedelta(days=2)
-        data = {
-            'quantity': 2,
-            'due_date': due_date.strftime("%d-%m-%Y"),
-            'rented_by': self.normal_user,
-        }
-        response = self.authclient.post(rent_url, data=data)
+        response = self.authclient.post(rent_url)
         rent.refresh_from_db()
         self.assertTrue(rent.returned)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_return_movie_with_extracharge(self):
+        '''Test return movie with extracharge, should succeed.
+
+        Endpoint tested:
+            api/rents/<id:int>/return_it/ POST
+
+        Return:
+            response -> HTTPResponse
+        '''
+        self.authclient = APIClient()
+        self.authclient.credentials(
+            HTTP_AUTHORIZATION='Token ' + self.tokennotadmin)
+        movie = Movie.objects.create(**self.movie)
+        date_now = datetime.now().date()
+        due_date = date_now + timedelta(days=-2)
+        data = {
+            'movie': movie,
+            'quantity': 2,
+            'due_date': due_date.strftime("%Y-%m-%d"),
+            'amount': 2,
+            'rented_by': self.normal_user,
+        }
+        rent = Rent.objects.create(**data)
+        rent = Rent.objects.get(id=rent.id)
+        rent_url = reverse('rent-return-movie', args=[rent.id])
+        date_now = datetime.now().date()
+        due_date = date_now + timedelta(days=-2)
+        response = self.authclient.post(rent_url, data=data)
+        rent.refresh_from_db()
+        self.assertTrue(rent.returned)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)

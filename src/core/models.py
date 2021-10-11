@@ -84,6 +84,8 @@ class ExtraCharge(models.Model):
         _("Amount"), max_digits=8, decimal_places=2, default=0.0)
     is_paid = models.BooleanField(_("Is paid?"), default=False)
     paid_at = models.DateTimeField(_("Paid at"), null=True, blank=True)
+    rent = models.ForeignKey(
+        Rent, on_delete=models.CASCADE, blank=False, null=True)
 
     class Meta:
         verbose_name = _("Extra charge")
